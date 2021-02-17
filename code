@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[25]:
+
+
+
+#A python script used to web scrape needed information for investing from Mubasher.info , A wesbite used to display stock information.
+#it is scheduled to run daily at 10 AM using SeekWill. 
+
+
+#import necessary packages
+import requests
+import bs4
+from datetime import date
+from datetime import datetime
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+
+
+#Ask user to enter the stock code to be retrieved 
+print('ادخل رمز السهم المراد تحليله:')
+stock=input()
+
+#request from webpage for the stock code specified by user
+res=requests.get('https://www.mubasher.info/markets/TDWL/stocks/' + stock)
+
+# content of the response in bytes
+src=res.content
+
+#BeautifulSoup Parser
+soup=bs4.BeautifulSoup(src,'lxml') 
+
+
+#loop through 'market-summary__block-number' class which has all the stock prices needed for stock analysis
+prices = [entry.text for entry in soup.find_all('span', {'class':'market-summary__block-number'})]
+ 
+
+#Retrrieve and print stock name
+title=soup.select('h1')
+print(title[0].getText() )
+
+#ANSI escape sequence for bold text
+BOLD = '\033[1m'
+END = '\033[0m'
+
+#Printing stock info
+print(BOLD + "معلومات السهم" + END)
+print('\n')
+print(BOLD+ "فتح" + END)
+print(prices[0])
+
+print('\n')
+
+print(BOLD + "إغلاق سابق"+ END )
+print(prices[1])
+print('\n')
+print(BOLD + "أعلى"+ END )
+print(prices[2])
+print('\n')
+print(BOLD + "أدنى"+ END )
+print(prices[3])
+
+
+print('\n')
+
+
+#Visualization
+
+data = {'Type':['فتح', 'إغلاق سابق', 'أعلى', 'أدنى'],'Price':[float(prices[0]),float(prices[1]),float(prices[2]),float(prices[3])]}
+df = pd.DataFrame(data)
+
+df.plot(kind='bar',x='Type',y='Price',color=['#273c75', '#44bd32', '#273c75', '#44bd32'])
+ 
+
+
+#Print current time
+print("وقت التحديث")
+print(datetime.now())
+print("Python script is updated daily at 10 AM, an hour after the trading hours")
+
