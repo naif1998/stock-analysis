@@ -1,15 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[25]:
-
+ 
 
 
-#A python script used to web scrape needed information for investing from Mubasher.info , A wesbite used to display stock information.
-#it is scheduled to run daily at 10 AM using SeekWill. 
-
-
-#import necessary packages
+#import necessary packages. Some packages need to be installed in advanced for the code to fully function.
 import requests
 import bs4
 from datetime import date
@@ -18,8 +12,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import plotly
+import plotly.express as px
 
 
+
+
+#A python script used to web scrape needed information for investing from Mubasher.info , A wesbite used to display stock information.
+#it is scheduled to run daily at 10 AM using SeekWill. 
 
 
 #Ask user to enter the stock code to be retrieved 
@@ -69,17 +69,23 @@ print(prices[3])
 print('\n')
 
 
-#Visualization
+#Visualization using Plotly
 
 data = {'Type':['فتح', 'إغلاق سابق', 'أعلى', 'أدنى'],'Price':[float(prices[0]),float(prices[1]),float(prices[2]),float(prices[3])]}
 df = pd.DataFrame(data)
 
-df.plot(kind='bar',x='Type',y='Price',color=['#273c75', '#44bd32', '#273c75', '#44bd32'])
- 
+fig = px.bar(df, x="Type", y="Price",  title="")
+fig.layout.template = 'plotly_dark'
+fig.show()
 
 
 #Print current time
 print("وقت التحديث")
 print(datetime.now())
 print("Python script is updated daily at 10 AM, an hour after the trading hours")
+
+
+
+
+
 
